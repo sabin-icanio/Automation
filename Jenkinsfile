@@ -11,7 +11,7 @@ pipeline {
 
                     if (isPreviousBuildRunning == 'true') {
                         echo "Previous build found, killing it..."
-                        sh "curl -s -X POST https://localhost:8080/scriptText --data-urlencode 'script=Jenkins.instance.getBuild(\"${previousBuildNumber}\").finish(hudson.model.Result.ABORTED)'"
+                        sh "curl -s -X POST https://your-jenkins-instance/scriptText --data-urlencode 'script=Jenkins.instance.getBuild(\"${previousBuildNumber}\").finish(hudson.model.Result.ABORTED)'"
                     }
 
                     // Clone the Git repository
@@ -27,14 +27,21 @@ pipeline {
     post {
         always {
             script {
-                // Check if a new Git push occurred
-                def currentCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                def previousCommit = sh(returnStdout: true, script: 'git rev-parse HEAD^').trim()
+                try {
+                    // Check if a new Git push occurred
+                    def currentCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    def previousCommit = sh(returnStdout: true, script: 'git rev-parse HEAD^').trim()
 
-                if (currentCommit != previousCommit) {
-                    echo "New Git push detected, killing current build..."
-                    currentBuild.result = 'ABORTED'
-                    error("Build aborted due to new Git push")
+                    if (currentCommit != previousCommit) {
+                        echo "New Git push detected, killing current build..."
+                        currentBuild.result = 'ABORTED'
+                        throw new AbortException("Build aborted due to new Git push")
+                    }
+                } catch (Exception e) {
+                    echo "Handled exception: ${e.getMessage()}"
+                    // Handle the exception gracefully, if desired
+                    // For example, you can mark the build as unstable instead of failed
+                    currentBuild.result = 'UNSTABLE'
                 }
             }
         }
