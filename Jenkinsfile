@@ -14,6 +14,7 @@ pipeline {
                 // Execute your build commands here
                 sh 'pip3 install -r requirements.txt'
                 sh 'python3 app.py'
+                sh 'pm2 ps'
             }
         }
     }
