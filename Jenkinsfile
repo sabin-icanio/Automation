@@ -12,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Execute your build commands here
-                sh 'python3 build_and_push.py'
+                sh 'python3 app.py'
             }
         }
     }
