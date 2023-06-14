@@ -1,68 +1,15 @@
 pipeline {
+
     agent any
 
-    stages {
-        stage('Check for New Commit') {
-            steps {
-                script {
-                    // Get the commit hashes
-                    def currentCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    def previousCommit = sh(returnStdout: true, script: 'git rev-parse HEAD^').trim()
+        stages {
 
-                    // Compare the commit hashes
-                    if (currentCommit != previousCommit) {
-                        echo "New commit detected, aborting pipeline..."
-                        currentBuild.result = 'ABORTED'
-                        error("Pipeline aborted due to new commit")
-                    }
+            stage("build"){
+                steps {
+                    sh 'ls'
+                    sh 'pm2 delete "app.py"
+                    sh 'pm2 start "python3 app.py"
                 }
             }
         }
-
-        stage('Build') {
-            when {
-                // Only execute this stage if no new commit is detected
-                expression { currentBuild.result != 'ABORTED' }
-            }
-            steps {
-                // Clone the Git repository
-                git 'https://github.com/sabin-icanio/automation.git'
-
-                // Install dependencies (if needed)
-                sh 'pip install -r requirements.txt'
-
-                // Build the project (replace with actual build command)
-                sh 'python3 build.py'
-            }
-        }
-
-        stage('Test') {
-            when {
-                // Only execute this stage if no new commit is detected
-                expression { currentBuild.result != 'ABORTED' }
-            }
-            steps {
-                // Run tests (replace with actual test command)
-                sh 'python3 test.py'
-            }
-        }
-
-        stage('Deploy') {
-            when {
-                // Only execute this stage if no new commit is detected
-                expression { currentBuild.result != 'ABORTED' }
-            }
-            steps {
-                // Deploy the project (replace with actual deployment command)
-                sh 'python3 deploy.py'
-            }
-        }
-    }
-
-    post {
-        always {
-            // Clean up or perform any necessary post-build actions
-            echo "Clean....."
-        }
-    }
 }
