@@ -13,9 +13,7 @@ pipeline {
             steps {
                 // Execute your build commands here
                 sh 'pip3 install -r requirements.txt'
-                sh 'python3 app.py'
-                sh 'pm2 ps'
-            }
+                sh 'pm2 start "python3 app.py" --name python-web-api '           }
         }
     }
 }
