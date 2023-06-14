@@ -10,11 +10,7 @@ pipeline {
                     def previousCommit = sh(returnStdout: true, script: 'git rev-parse HEAD^').trim()
 
                     // Compare the commit hashes
-                    if (currentCommit != previousCommit) {
-                        echo "New commit detected, aborting pipeline..."
-                        currentBuild.result = 'ABORTED'
-                        error("Pipeline aborted due to new commit")
-                    }
+                    
                 }
             }
         }
