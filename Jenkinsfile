@@ -15,7 +15,7 @@ pipeline {
                     }
 
                     // Clone the Git repository
-                    git 'https://github.com/your/repo.git'
+                    git 'https://github.com/sabin-icanio/Automation.git/'
 
                     // Build the Python project
                     sh 'python build.py'
