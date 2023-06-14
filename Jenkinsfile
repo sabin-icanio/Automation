@@ -12,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Execute your build commands here
-                sh 'pip install -r requirement.txt'
+                sh 'pip3 install -r requirement.txt'
                 sh 'python3 app.py'
             }
         }
