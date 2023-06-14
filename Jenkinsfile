@@ -16,7 +16,7 @@ pipeline {
                 // Execute your build commands here
                 sh 'pip3 install -r requirements.txt'
                 sh 'npm install pm2 -g'
-                sh 'PORT=5000 pm2 start -i "python3 app.py" --name python-web-api ' 
+                sh 'pm2 start "python3 app.py" --name job1 --interpreter python3 --restart-delay 10000 ' 
                 sh 'pm2 save'
             }
         }
