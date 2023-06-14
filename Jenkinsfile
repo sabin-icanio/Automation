@@ -43,7 +43,7 @@ pipeline {
             }
             steps {
                 // Run tests (replace with actual test command)
-                //sh 'python3 test.py'
+                sh 'python3 test.py'
             }
         }
 
@@ -54,14 +54,21 @@ pipeline {
             }
             steps {
                 // Deploy the project (replace with actual deployment command)
-                //sh 'python3 deploy.py'
+                sh 'python3 deploy.py'
             }
         }
     }
 
     post {
+        success {
+            // Clean up or perform any necessary post-build actions
+            echo "Executing clean-up actions..."
+            // Add your clean-up commands here
+        }
         always {
             // Clean up or perform any necessary post-build actions
+            echo "Always executing clean-up actions..."
+            // Add any additional clean-up commands here
         }
     }
 }
