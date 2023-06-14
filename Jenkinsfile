@@ -6,17 +6,19 @@ pipeline {
             steps {
                 script {
                     // Check if a previous build is running
-                    def previousBuild = currentBuild.rawBuild.getPreviousBuild()
-                    if (previousBuild != null) {
+                    def previousBuildNumber = sh(returnStdout: true, script: 'echo \$BUILD_NUMBER-1').trim()
+                    def isPreviousBuildRunning = sh(returnStatus: true, script: "jenkins model-build-is-running $previousBuildNumber") == 0
+
+                    if (isPreviousBuildRunning) {
                         echo "Previous build found, killing it..."
-                        previousBuild.executor.interrupt(Result.ABORTED)
+                        sh "jenkins model-build-abort $previousBuildNumber"
                     }
 
                     // Clone the Git repository
-                    git 'hhttps://github.com/sabin-icanio/Automation.git/'
+                    git 'https://github.com/your/repo.git'
 
                     // Build the Python project
-                    sh 'python3 app.py'
+                    sh 'python build.py'
                 }
             }
         }
@@ -38,4 +40,3 @@ pipeline {
         }
     }
 }
-
