@@ -10,7 +10,11 @@ pipeline {
                     def previousCommit = sh(returnStdout: true, script: 'git rev-parse HEAD^').trim()
 
                     // Compare the commit hashes
-                    
+                    if (currentCommit != previousCommit) {
+                        echo "New commit detected, aborting pipeline..."
+                        previousBuild.result = 'ABORTED'
+                        error("Pipeline aborted due to new commit")
+                    }
                 }
             }
         }
@@ -18,7 +22,7 @@ pipeline {
         stage('Build') {
             when {
                 // Only execute this stage if no new commit is detected
-                expression { currentBuild.result != 'ABORTED' }
+                expression { previousBuild.result != 'ABORTED' }
             }
             steps {
                 // Clone the Git repository
@@ -35,7 +39,7 @@ pipeline {
         stage('Test') {
             when {
                 // Only execute this stage if no new commit is detected
-                expression { currentBuild.result != 'ABORTED' }
+                expression { previousBuild.result != 'ABORTED' }
             }
             steps {
                 // Run tests (replace with actual test command)
@@ -46,7 +50,7 @@ pipeline {
         stage('Deploy') {
             when {
                 // Only execute this stage if no new commit is detected
-                expression { currentBuild.result != 'ABORTED' }
+                expression { previousBuild.result != 'ABORTED' }
             }
             steps {
                 // Deploy the project (replace with actual deployment command)
