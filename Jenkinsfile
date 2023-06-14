@@ -26,7 +26,7 @@ pipeline {
             }
             steps {
                 // Clone the Git repository
-                git 'https://github.com/your/repo.git'
+                git 'https://github.com/sabin-icanio/automation.git'
 
                 // Install dependencies (if needed)
                 sh 'pip install -r requirements.txt'
