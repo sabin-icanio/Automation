@@ -7,15 +7,15 @@ pipeline {
                 script {
                     // Check if a previous build is running
                     def previousBuildNumber = sh(returnStdout: true, script: 'echo \$BUILD_NUMBER-1').trim()
-                    def isPreviousBuildRunning = sh(returnStatus: true, script: "jenkins model-build-is-running $previousBuildNumber") == 0
+                    def isPreviousBuildRunning = sh(returnStatus: true, script: "jenkins queue is-build-running $previousBuildNumber") == 0
 
                     if (isPreviousBuildRunning) {
                         echo "Previous build found, killing it..."
-                        sh "jenkins model-build-abort $previousBuildNumber"
+                        sh "jenkins build $previousBuildNumber --abort"
                     }
 
                     // Clone the Git repository
-                    git 'https://github.com/sabin-icanio/Automation.git/'
+                    git 'https://github.com/sabin-icanio/automation.git'
 
                     // Build the Python project
                     sh 'python build.py'
