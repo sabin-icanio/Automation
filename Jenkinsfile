@@ -10,11 +10,11 @@ pipeline {
                     def previousCommit = sh(returnStdout: true, script: 'git rev-parse HEAD^').trim()
 
                     // Compare the commit hashes
-                    // if (currentCommit != previousCommit) {
-                    //     echo "New commit detected, aborting pipeline..."
-                    //     previousBuild.result = 'ABORTED'
-                    //     error("Pipeline aborted due to new commit")
-                    // }
+                    if (currentCommit != previousCommit) {
+                        echo "New commit detected, aborting pipeline..."
+                        currentBuild.result = 'ABORTED'
+                        error("Pipeline aborted due to new commit")
+                    }
                 }
             }
         }
@@ -22,7 +22,7 @@ pipeline {
         stage('Build') {
             when {
                 // Only execute this stage if no new commit is detected
-                expression { previousBuild.result != 'ABORTED' }
+                expression { currentBuild.result != 'ABORTED' }
             }
             steps {
                 // Clone the Git repository
@@ -32,14 +32,14 @@ pipeline {
                 sh 'pip install -r requirements.txt'
 
                 // Build the project (replace with actual build command)
-                sh 'python3 app.py'
+                sh 'python3 build.py'
             }
         }
 
         stage('Test') {
             when {
                 // Only execute this stage if no new commit is detected
-                expression { previousBuild.result != 'ABORTED' }
+                expression { currentBuild.result != 'ABORTED' }
             }
             steps {
                 // Run tests (replace with actual test command)
@@ -50,7 +50,7 @@ pipeline {
         stage('Deploy') {
             when {
                 // Only execute this stage if no new commit is detected
-                expression { previousBuild.result != 'ABORTED' }
+                expression { currentBuild.result != 'ABORTED' }
             }
             steps {
                 // Deploy the project (replace with actual deployment command)
@@ -60,15 +60,8 @@ pipeline {
     }
 
     post {
-        success {
-            // Clean up or perform any necessary post-build actions
-            echo "Executing clean-up actions..."
-            // Add your clean-up commands here
-        }
         always {
             // Clean up or perform any necessary post-build actions
-            echo "Always executing clean-up actions..."
-            // Add any additional clean-up commands here
         }
     }
 }
