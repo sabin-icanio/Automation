@@ -62,7 +62,7 @@ pipeline {
     post {
         always {
             // Clean up or perform any necessary post-build actions
-            echo "Clean..."
+            echo "Clean....."
         }
     }
 }
